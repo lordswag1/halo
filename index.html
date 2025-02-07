@@ -1,62 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rotating Globe</title>
   <style>
-    html, body {
-      margin: 0;
-      overflow: hidden; /* Prevent scrollbars */
-      /* Set the body background to transparent */
+    body { 
+      margin: 0; 
       background-color: transparent;
-    }
-    #globeViz {
-      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       height: 100vh;
+      overflow: hidden;
+    }
+    #globeViz { 
+      width: 800px;
+      height: 800px;
     }
   </style>
-  <script src="https://unpkg.com/three@0.143.0/build/three.min.js"></script>
-  <script src="https://unpkg.com/globe.gl"></script>
+
+  <script src="//unpkg.com/globe.gl"></script>
 </head>
+
 <body>
   <div id="globeViz"></div>
 
   <script>
-    // Create the globe instance
-    const globeContainer = document.getElementById('globeViz');
-    const globe = Globe()(globeContainer)
-      .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
-      .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
-      // Set the globe's background to transparent (RGBA with 0 alpha)
-      .backgroundColor('rgba(0, 0, 0, 0)');
-
-    // Auto-rotate the globe
-    globe.controls().autoRotate = true;
-    globe.controls().autoRotateSpeed = 0.35;
-
-    // Add markers for visited countries
-    const locations = [
-      { name: 'Thailand', lat: 15.87, lng: 100.99 },
-      { name: 'Italy', lat: 41.87, lng: 12.56 },
-      { name: 'Vietnam', lat: 14.06, lng: 108.22 },
-      { name: 'Cambodia', lat: 12.56, lng: 104.99 },
-      { name: 'Indonesia', lat: -0.79, lng: 113.92 },
-      { name: 'Turkey', lat: 38.96, lng: 35.24 },
-      { name: 'Malaysia', lat: 4.21, lng: 101.97 }
+    const places = [
+      { lat: -6.1751, lng: 106.8650, name: 'Indonesia' },
+      { lat: 3.1390, lng: 101.6869, name: 'Malaysia' },
+      { lat: 21.0278, lng: 105.8342, name: 'Vietnam' },
+      { lat: 13.7563, lng: 100.5018, name: 'Thailand' },
+      { lat: 11.5564, lng: 104.9282, name: 'Cambodia' },
+      { lat: 39.9334, lng: 32.8597, name: 'Turkey' },
+      { lat: 41.9028, lng: 12.4964, name: 'Italy' }
     ];
 
-    globe
-      .pointsData(locations)
-      .pointLat('lat')
-      .pointLng('lng')
+    const world = Globe()
+      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+      .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
+      .backgroundColor('rgba(0,0,0,0)')
+      .showAtmosphere(false)
+      .pointsData(places)
       .pointColor(() => 'red')
-      .pointAltitude(0.02)
-      .pointLabel('name');
+      .pointRadius(0.5)
+      .pointAltitude(0)
+      .width(800)
+      .height(800)
+      (document.getElementById('globeViz'));
 
-    // Add lighting for a more realistic appearance
-    const ambientLight = new THREE.AmbientLight(0x404040, 1);
-    globe.scene().add(ambientLight);
+    // Auto-rotate
+    world.controls().autoRotate = true;
+    world.controls().autoRotateSpeed = 0.35;
+
+    // Adjust globe size to fit container
+    world.onResize(function() {
+      const containerWidth = document.getElementById('globeViz').clientWidth;
+      const containerHeight = document.getElementById('globeViz').clientHeight;
+      world.width(containerWidth).height(containerHeight);
+    });
   </script>
 </body>
-</html>
